@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"learn/REST/config"
+	"learn/REST/middleware"
 	"learn/REST/models"
 	"learn/REST/repository"
 	"learn/REST/utils"
@@ -28,9 +29,10 @@ func main() {
 	fmt.Println("Success Connection to DB")
 
 	http.HandleFunc("/paket", GetPaket)
-	http.HandleFunc("/paket/insert", PostPaket)
-	http.HandleFunc("/paket/update", UpdatePaket)
-	http.HandleFunc("/paket/delete", DeletePaket)
+	//Set Auth for insert update delete
+	http.Handle("/paket/insert", middleware.Auth(http.HandlerFunc(PostPaket)))
+	http.Handle("/paket/update", middleware.Auth(http.HandlerFunc(UpdatePaket)))
+	http.Handle("/paket/delete", middleware.Auth(http.HandlerFunc(DeletePaket)))
 
 	err := http.ListenAndServe(":7000", nil)
 	if err != nil {
