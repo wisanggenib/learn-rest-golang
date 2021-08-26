@@ -16,7 +16,7 @@ const (
 
 func GetDataPaket(ctx context.Context) ([]models.Paket, error) {
 	var Datas []models.Paket
-	db, err := config.MySql()
+	db, err := config.GetConnection()
 
 	if err != nil {
 		log.Fatal("Error : ", err)
@@ -44,7 +44,7 @@ func GetDataPaket(ctx context.Context) ([]models.Paket, error) {
 }
 
 func PostDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func PostDataPaket(ctx context.Context, dts models.Paket) error {
 }
 
 func UpdateDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func UpdateDataPaket(ctx context.Context, dts models.Paket) error {
 }
 
 func DeleteDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}

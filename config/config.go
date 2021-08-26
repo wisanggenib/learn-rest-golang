@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"learn/REST/utils"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -15,13 +16,26 @@ var (
 )
 
 var (
-	dsn = fmt.Sprintf("%v:%v@/%v", username, password, database)
+	dsn    = fmt.Sprintf("%v:%v@/%v", username, password, database)
+	dbcon  *sql.DB
+	newErr error
 )
 
 func MySql() (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		log.Fatal("Error : ", err)
 	}
-	return db, nil
+
+	log.Println("Called")
+
+	dbcon = db
+	newErr = err
+
+	return dbcon, newErr
+}
+
+func GetConnection() (*sql.DB, error) {
+	// MySql()
+	return dbcon, newErr
 }
