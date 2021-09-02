@@ -14,13 +14,14 @@ const (
 	table = "paket"
 )
 
-func GetDataPaket(ctx context.Context) ([]models.Paket, error) {
-	var Datas []models.Paket
-	db, err := config.MySql()
+func GetDataPaket(ctx context.Context) ([]*models.Paket, error) {
+	var Datas []*models.Paket
+	db, err := config.GetConnection()
 
 	if err != nil {
 		log.Fatal("Error : ", err)
 	}
+	defer db.Close()
 
 	queryPaket := fmt.Sprintf("SELECT * FROM %v", table)
 	rowQuery, err := db.QueryContext(ctx, queryPaket)
@@ -28,6 +29,7 @@ func GetDataPaket(ctx context.Context) ([]models.Paket, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rowQuery.Close()
 
 	for rowQuery.Next() {
 		var MyPaket models.Paket
@@ -37,17 +39,19 @@ func GetDataPaket(ctx context.Context) ([]models.Paket, error) {
 			&MyPaket.HARGA_PAKET,
 			&MyPaket.ID_JENIS); err != nil {
 			return nil, err
+
 		}
-		Datas = append(Datas, MyPaket)
+		Datas = append(Datas, &MyPaket)
 	}
 	return Datas, nil
 }
 
-func PostDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+func PostDataPaket(ctx context.Context, dts *models.Paket) error {
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	queryPaket := fmt.Sprintf("INSERT INTO %v VALUES (%v,'%v',%v,%v)",
 		table,
@@ -65,11 +69,12 @@ func PostDataPaket(ctx context.Context, dts models.Paket) error {
 
 }
 
-func UpdateDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+func UpdateDataPaket(ctx context.Context, dts *models.Paket) error {
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	queryPaket := fmt.Sprintf("UPDATE %v set nama_paket='%v', harga_paket=%v WHERE id_paket=%v ",
 		table,
@@ -86,15 +91,16 @@ func UpdateDataPaket(ctx context.Context, dts models.Paket) error {
 	return nil
 }
 
-func DeleteDataPaket(ctx context.Context, dts models.Paket) error {
-	db, err := config.MySql()
+func DeleteDataPaket(ctx context.Context, id int) error {
+	db, err := config.GetConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	queryPaket := fmt.Sprintf("DELETE FROM %v WHERE id_paket = %v",
 		table,
-		dts.ID_PAKET)
+		id)
 
 	val, err := db.ExecContext(ctx, queryPaket)
 	if err != nil {
@@ -110,6 +116,5 @@ func DeleteDataPaket(ctx context.Context, dts models.Paket) error {
 	if check == 0 {
 		return errors.New("id not found")
 	}
-
 	return nil
 }
