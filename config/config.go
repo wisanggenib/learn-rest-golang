@@ -21,21 +21,11 @@ var (
 	newErr error
 )
 
-func MySql() (*sql.DB, error) {
+func GetConnection() (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("Error : ", err)
 	}
 
-	log.Println("Called")
-
-	dbcon = db
-	newErr = err
-
-	return dbcon, newErr
-}
-
-func GetConnection() (*sql.DB, error) {
-	// MySql()
-	return dbcon, newErr
+	return db, err
 }
