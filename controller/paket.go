@@ -39,7 +39,7 @@ func PostPaket(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		var datas models.Paket
+		var datas *models.Paket
 
 		if err := json.NewDecoder(r.Body).Decode(&datas); err != nil {
 			utils.ResponseJSON(w, err, http.StatusBadRequest)
@@ -71,14 +71,12 @@ func UpdatePaket(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		var datas models.Paket
+		var datas *models.Paket
 
 		if err := json.NewDecoder(r.Body).Decode(&datas); err != nil {
 			utils.ResponseJSON(w, err, http.StatusBadRequest)
 			return
 		}
-
-		fmt.Println(datas)
 
 		if err := repository.UpdateDataPaket(ctx, datas); err != nil {
 			utils.ResponseJSON(w, err, http.StatusInternalServerError)
@@ -88,7 +86,7 @@ func UpdatePaket(w http.ResponseWriter, r *http.Request) {
 		res := map[string]string{
 			"status ": "Succes Update",
 		}
-		fmt.Println("Data Updated")
+
 		utils.ResponseJSON(w, res, http.StatusCreated)
 		return
 	}
@@ -102,15 +100,16 @@ func DeletePaket(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		var datas models.Paket
+		// var datas models.Paket
 
 		id := r.URL.Query().Get("id_paket")
 		if id == "" {
 			utils.ResponseJSON(w, "Please insert ID", http.StatusBadRequest)
 		}
+		var id_paket int
+		id_paket, _ = strconv.Atoi(id)
 
-		datas.ID_PAKET, _ = strconv.Atoi(id)
-		if err := repository.DeleteDataPaket(ctx, datas); err != nil {
+		if err := repository.DeleteDataPaket(ctx, id_paket); err != nil {
 			kesalahan := map[string]string{
 				"errors": fmt.Sprintf("%v", err),
 			}
